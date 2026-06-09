@@ -1,9 +1,10 @@
-## 🤖 Bot TikTok-Discord Automatisé
+## 🤖 Bot TikTok-Discord Automatisé - AVEC CONNEXION AUTOMATIQUE
 
-Bot qui **commente les vidéos TikTok** avec des hashtags personnalisés, contrôlé via Discord avec un **panel de gestion des commentaires**.
+Bot qui **commente les vidéos TikTok** avec des hashtags personnalisés, contrôlé via Discord avec un **panel de gestion des commentaires** et **connexion automatique au compte TikTok**.
 
 ### ✨ Fonctionnalités
 
+✅ **Connexion automatique** au compte TikTok  
 ✅ Commente les vidéos TikTok automatiquement  
 ✅ Contrôle via commandes Discord  
 ✅ **Panel de gestion des commentaires** (ajouter/supprimer)  
@@ -29,22 +30,31 @@ chmod +x setup.sh
 bash setup.sh
 ```
 
-### 3️⃣ Configurer le token Discord
+### 3️⃣ Configurer les identifiants
+
+**a) Token Discord:**
 ```bash
-# Éditer le fichier .env
 nano .env
 ```
 
-Ajoute ton **Discord Token**:
+Ajoute tes identifiants:
 ```env
-DISCORD_TOKEN=ton_token_ici
+DISCORD_TOKEN=ton_token_discord_ici
+TIKTOK_USERNAME=ton_username_tiktok
+TIKTOK_PASSWORD=ton_password_tiktok
 ```
 
-**Comment obtenir le token?**
+**Comment obtenir le Discord Token?**
 1. Va sur https://discord.com/developers/applications
 2. Crée une nouvelle application
 3. Va dans "Bot" et clique "Add Bot"
 4. Copie le token
+
+**Comment obtenir les identifiants TikTok?**
+- `TIKTOK_USERNAME` = ton username ou email TikTok
+- `TIKTOK_PASSWORD` = ton mot de passe TikTok
+
+⚠️ **Important:** Garde ces identifiants secrets!
 
 ### 4️⃣ Lancer le bot
 ```bash
@@ -94,7 +104,7 @@ Réinitialiser les commentaires par défaut
 ### Commentaire Automatique
 
 #### `/commente <hashtag> [quantite]`
-Commenter les vidéos avec un hashtag (une seule fois)
+Commenter les vidéos avec un hashtag (une seule fois) - **Se connecte automatiquement!**
 
 ```
 /commente #mayotteislande 5
@@ -142,6 +152,24 @@ Arrête le bot
 
 ---
 
+## 🔐 Connexion Automatique à TikTok
+
+Le bot se connecte **automatiquement** à ton compte TikTok quand tu lances une commande de commentaire:
+
+1. Lit les identifiants depuis `.env`
+2. Ouvre le navigateur
+3. Se connecte à TikTok
+4. Commence à commenter les vidéos
+
+**Le bot utilise les identifiants du fichier `.env`:**
+
+```env
+TIKTOK_USERNAME=mon_username
+TIKTOK_PASSWORD=mon_mot_de_passe
+```
+
+---
+
 ## 📝 Format des Hashtags
 
 Les hashtags sont **automatiquement convertis en minuscules continus**:
@@ -154,13 +182,29 @@ Les hashtags sont **automatiquement convertis en minuscules continus**:
 
 ---
 
-## ⚙️ Exemple d'Utilisation
+## ⚙️ Exemple d'Utilisation Complet
 
-### Étape 1: Configurer les commentaires
+### Étape 1: Configuration initiale (une seule fois)
+
+**a) Édite `.env`:**
+```bash
+nano .env
+```
+
+```env
+DISCORD_TOKEN=ton_token_discord
+TIKTOK_USERNAME=mon_username_tiktok
+TIKTOK_PASSWORD=mon_mot_de_passe_tiktok
+```
+
+**b) Sauvegarde** (Ctrl+O, Entrée, Ctrl+X)
+
+### Étape 2: Configurer tes commentaires
+
 ```
 /panel
 ```
-Voit la liste des commentaires actuels
+Vois la liste des commentaires actuels
 
 ```
 /ajouter_com Bv Bh
@@ -169,17 +213,20 @@ Voit la liste des commentaires actuels
 /lister_com
 ```
 
-### Étape 2: Configurer les hashtags
+### Étape 3: Configurer les hashtags
+
 ```
 /configurer #mayotteislande #pourtoi #parati #viral
 ```
 
-### Étape 3: Lancer le bot
+### Étape 4: Lancer les commentaires
+
+**Option 1 - Une seule fois:**
 ```
 /commente #mayotteislande 5
 ```
 
-Ou en mode automatique:
+**Option 2 - Mode automatique (toutes les 2 minutes):**
 ```
 /automatique 120
 ```
@@ -188,8 +235,23 @@ Ou en mode automatique:
 
 ## 📁 Fichiers de Configuration
 
+### `.env`
+Stocke tes identifiants. Format:
+```env
+DISCORD_TOKEN=discord_token_ici
+TIKTOK_USERNAME=username_tiktok
+TIKTOK_PASSWORD=password_tiktok
+HEADLESS=true
+DEBUG=false
+```
+
+**⚠️ Important:**
+- Ne partage JAMAIS ce fichier
+- Ajoute-le à `.gitignore` (déjà fait ✅)
+- Utilise des identifiants sécurisés
+
 ### `commentaires.json`
-Stocke les commentaires personnalisés. Format:
+Stocke les commentaires personnalisés:
 ```json
 {
   "default": [
@@ -200,20 +262,26 @@ Stocke les commentaires personnalisés. Format:
 }
 ```
 
-### `.env`
-Stocke le token Discord:
-```env
-DISCORD_TOKEN=ton_token_ici
-```
-
 ---
 
 ## 🐛 Dépannage
 
+### ❌ "Identifiants TikTok manquants"
+```bash
+# Vérifie que .env contient TIKTOK_USERNAME et TIKTOK_PASSWORD
+cat .env
+```
+
+### ❌ "Connexion TikTok échouée"
+- Vérifie que les identifiants sont **corrects**
+- Essaie de te **connecter manuellement** sur TikTok
+- Attends quelques secondes avant relancer
+- TikTok peut avoir une **vérification** (résous-la manuellement d'abord)
+
 ### ❌ "DISCORD_TOKEN non trouvé"
 ```bash
-# Vérifie que .env existe et contient le token
-cat .env
+# Édite et ajoute ton token
+nano .env
 ```
 
 ### ❌ "Driver Selenium non trouvé"
@@ -229,10 +297,11 @@ apt install -y chromium-browser
 ```
 
 ### ⚠️ Les commentaires ne s'envoient pas
-- Vérifie que tu es **connecté à TikTok** dans le navigateur
+- Vérifie que tu es **connecté à TikTok** (vérif 2FA)
 - Attends que les vidéos **se chargent complètement**
 - Vérifies les **sélecteurs CSS** (peuvent changer)
 - Utilise `/lister_com` pour vérifier que tes commentaires sont bien ajoutés
+- Essaie de **commenter manuellement** d'abord
 
 ### ⚠️ "Aucun commentaire configuré"
 ```bash
@@ -245,7 +314,7 @@ apt install -y chromium-browser
 ## 📦 Dépendances
 
 - `discord.py` - Bot Discord
-- `selenium` - Web scraping TikTok
+- `selenium` - Automatisation TikTok
 - `webdriver-manager` - Gestion du driver Chrome
 - `python-dotenv` - Variables d'environnement
 - `beautifulsoup4` - Parsing HTML
@@ -270,14 +339,29 @@ pkill -f "python bot.py"
 
 ---
 
-## ⚖️ Avertissement
+## ⚖️ Avertissement & Responsabilité
 
-⚠️ **Utilise ce bot responsablement:**
-- Respecte les conditions d'utilisation de TikTok
-- Ne spam pas les commentaires
-- Évite les compte bans
-- Utilise des délais appropriés entre commentaires
-- Les commentaires trop similaires peuvent être bloqués
+⚠️ **Important - Utilise ce bot responsablement:**
+
+- ✅ Respecte les conditions d'utilisation de TikTok
+- ✅ Ne spam pas les commentaires
+- ✅ Utilise des délais appropriés entre commentaires
+- ✅ Évite les suspensions/bans de compte
+- ✅ Varie les commentaires
+- ⛔ Ne publie pas ce bot gratuitement
+- ⛔ Les commentaires trop similaires seront bloqués
+- ⛔ TikTok peut détecter l'automatisation
+
+**Tu es responsable de l'utilisation que tu en fais!**
+
+---
+
+## 🔒 Sécurité
+
+- Les identifiants sont stockés **localement** dans `.env`
+- Ils ne sont **jamais** envoyés à GitHub (grâce à `.gitignore`)
+- Ne partage **jamais** ton fichier `.env`
+- Utilise des **mots de passe forts**
 
 ---
 
@@ -285,7 +369,7 @@ pkill -f "python bot.py"
 
 Si tu as des problèmes:
 1. Utilise `/aide` pour voir toutes les commandes
-2. Vérifies les logs du bot
+2. Vérifies les logs du bot (`tail -f bot.log`)
 3. Réinstalle les dépendances
 4. Crée une issue sur GitHub
 
